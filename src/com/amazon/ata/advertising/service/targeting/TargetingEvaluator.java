@@ -39,8 +39,6 @@ public class TargetingEvaluator {
 //                .allMatch(t-> t.isTrue())
 //                ;
 
-
-
 //        for (TargetingPredicate predicate : targetingPredicates) {
 //            TargetingPredicateResult predicateResult = predicate.evaluate(requestContext);
 //            if (!predicateResult.isTrue()) {
@@ -52,7 +50,6 @@ public class TargetingEvaluator {
                 .stream()
                 .map(x -> x.evaluate(requestContext))
                 .anyMatch(x -> !x.isTrue()) ?
-                TargetingPredicateResult.FALSE :
-                TargetingPredicateResult.TRUE;
+                TargetingPredicateResult.FALSE : TargetingPredicateResult.TRUE;
     }
 }

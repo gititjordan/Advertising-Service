@@ -8,8 +8,6 @@ import com.amazon.ata.advertising.service.model.RequestContext;
 import com.amazon.ata.advertising.service.targeting.TargetingEvaluator;
 import com.amazon.ata.advertising.service.targeting.TargetingGroup;
 
-import com.amazon.ata.advertising.service.targeting.predicate.TargetingPredicateResult;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 import javax.inject.Inject;
 
-/**
+/**k
  * This class is responsible for picking the advertisement to be rendered.
  */
 public class AdvertisementSelectionLogic {
@@ -62,33 +60,49 @@ public class AdvertisementSelectionLogic {
         GeneratedAdvertisement generatedAdvertisement = new EmptyGeneratedAdvertisement();
         TargetingEvaluator evaluator = new TargetingEvaluator(new RequestContext(customerId, marketplaceId));
 
+        Comparator<Double> clickThroughRateComparator = Comparator.reverseOrder();
+        Map<Double, AdvertisementContent> clickThroughRateMap = new TreeMap<>(clickThroughRateComparator);
+
         if (StringUtils.isEmpty(marketplaceId)) {
             LOG.warn("MarketplaceId cannot be null or empty. Returning empty ad.");
         } else {
-            final List<AdvertisementContent> contents = contentDao.get(marketplaceId);
+            Map<Double, AdvertisementContent> advertisementContentTreeMap = new TreeMap<>(Comparator.reverseOrder());
+            contentDao.get(marketplaceId)
+                    .forEach(adContent -> (targetingGroupDao.get(adContent.getContentId())
+                            .stream()
+                            .filter(targetingGroup -> evaluator
+                            .evaluate(targetingGroup).isTrue()))
+                            .forEach(x -> advertisementContentTreeMap.put(x.getClickThroughRate(), adContent)));
+            generatedAdvertisement = advertisementContentTreeMap.values()
+                    .stream()
+                    .findFirst()
+                    .map(GeneratedAdvertisement::new)
+                    .orElseGet(EmptyGeneratedAdvertisement::new);
 
-            final List<TargetingGroup> groups = new ArrayList<>();
-            for (AdvertisementContent content : contents) {
-                for (TargetingGroup group : targetingGroupDao.get(content.getContentId())) {
-                    if (evaluator.evaluate(group).equals(TargetingPredicateResult.TRUE)) {
-                        groups.add(group);
-                    }
-                }
-            }
-
-            final List<AdvertisementContent> contentList = new ArrayList<>();
-            for (TargetingGroup group : groups) {
-                for (AdvertisementContent content : contents) {
-                    if (content.getContentId().equals(group.getContentId())) {
-                        contentList.add(content);
-                    }
-                }
-            }
-
-            if (CollectionUtils.isNotEmpty(contentList)) {
-                AdvertisementContent randomAdvertisementContent = contentList.get(random.nextInt(contentList.size()));
-                generatedAdvertisement = new GeneratedAdvertisement(randomAdvertisementContent);
-            }
+//            final List<AdvertisementContent> contents = contentDao.get(marketplaceId);
+//
+//            final List<TargetingGroup> groups = new ArrayList<>();
+//            for (AdvertisementContent content : contents) {
+//                for (TargetingGroup group : targetingGroupDao.get(content.getContentId())) {
+//                    if (evaluator.evaluate(group).equals(TargetingPredicateResult.TRUE)) {
+//                        groups.add(group);
+//                    }
+//                }
+//                }
+//
+//            final List<AdvertisementContent> contentList = new ArrayList<>();
+//            for (TargetingGroup group : groups) {
+//                for (AdvertisementContent content : contents) {
+//                    if (content.getContentId().equals(group.getContentId())) {
+//                        contentList.add(content);
+//                    }
+//                }
+//            }
+//
+//            if (CollectionUtils.isNotEmpty(contentList)) {
+//                AdvertisementContent randomAdvertisementContent = contentList.get(random.nextInt(contentList.size()));
+//                generatedAdvertisement = new GeneratedAdvertisement(randomAdvertisementContent);
+//            }
 
         }
         return generatedAdvertisement;

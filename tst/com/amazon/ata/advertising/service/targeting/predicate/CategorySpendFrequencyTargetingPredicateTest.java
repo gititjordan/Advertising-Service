@@ -8,6 +8,7 @@ import com.amazon.ata.customerservice.Spend;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class CategorySpendFrequencyTargetingPredicateTest {
 
     @BeforeEach
     public void setup() {
-        initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(spendDao.get(REQUEST_CONTEXT)).thenReturn(Collections.singletonMap(CATEGORY, SPEND));
     }
 

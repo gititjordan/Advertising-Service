@@ -8,6 +8,7 @@ import com.amazon.ata.advertising.service.targeting.TargetingGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +19,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class AdvertisementSelectionLogicTest {
 
@@ -48,7 +48,7 @@ public class AdvertisementSelectionLogicTest {
 
     @BeforeEach
     public void setup() {
-        initMocks(this);
+        MockitoAnnotations.openMocks(this);
         adSelectionService = new AdvertisementSelectionLogic(contentDao, targetingGroupDao);
         adSelectionService.setRandom(random);
     }

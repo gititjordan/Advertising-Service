@@ -6,6 +6,7 @@ import com.amazon.ata.customerservice.CustomerProfile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -23,7 +24,7 @@ public class ParentPredicateTest {
 
     @BeforeEach
     public void setup() {
-        initMocks(this);
+        MockitoAnnotations.openMocks(this);
         predicate = new ParentPredicate();
         predicate.setCustomerProfileDao(customerProfileDao);
     }

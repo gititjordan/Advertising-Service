@@ -60,5 +60,6 @@ public class TargetingPredicateTypeConverter implements DynamoDBTypeConverter<St
             throw new AdvertisementServiceException("Unable to convert the String value to a list of targeting " +
                     "predicates. String: " + value, e);
         }
+
     }
 }

@@ -7,6 +7,7 @@ import com.amazon.ata.customerservice.CustomerProfile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -24,7 +25,7 @@ public class AgeTargetingPredicateTest {
 
     @BeforeEach
     public void setup() {
-        initMocks(this);
+        MockitoAnnotations.openMocks(this);
         predicate = new AgeTargetingPredicate(AgeRange.AGE_18_TO_21);
         predicate.setCustomerProfileDao(customerProfileDao);
     }
